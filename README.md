@@ -1,6 +1,6 @@
 # Useful Commands
 
-firebase login
-firebase init
-firebase emulators:start
-firebase deploy
+- firebase login
+- firebase init
+- firebase emulators:start
+- firebase deploy
