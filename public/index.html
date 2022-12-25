@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/8.10.1/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/8.10.1/firebase-firestore.js"></script>
+    <script defer src="/__/firebase/8.10.1/firebase-storage.js"></script>
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div id="notLogged">
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-4">Log in</h1>
+          <p class="lead">Give the input below.</p>
+        </div>
+      </div>
+
+      <div class="container">
+        <form>
+          <div class="form-group">
+            <label for="inputEmail">Email address</label>
+            <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="checUser()">Log in</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="Logged" style="display:none">
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-4">Logged in</h1>
+          <p class="lead" id="loggin name">You are logged .</p>
+        </div>
+      </div>
+      <div class="container">
+        <!-- Go Back -->
+        <button type="button" class="btn btn-primary" onclick="logOut()">Log out</button>
+      </div>
+    </div>
+    
+    <script>
+      function logOut(){
+        let domElement = document.getElementById("notLogged");
+        domElement.style.display = "block";
+        domElement = document.getElementById("Logged");
+        domElement.style.display = "none";
+      }
+
+      function checkIfUserExists(email, password){
+        let db = firebase.firestore();
+
+        let docRef = db.collection("users").doc(email);
+        console.log(docRef);
+
+        docRef.get().then(function(doc) {
+          if (doc.exists) {
+            console.log("Document data:", doc.data());
+            if(doc.data().password == password){
+              console.log("Password is correct");
+              let domElement = document.getElementById("notLogged");
+              domElement.style.display = "none";
+              domElement = document.getElementById("Logged");
+              domElement.style.display = "block";
+              domElement = document.getElementById("loggin name");
+              domElement.innerHTML = "You are logged in as " + doc.data().name+ " " + doc.data().surname;
+            }else{
+              console.log("Password is incorrect");
+              alert("Password is incorrect!");
+            }
+          } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+            alert("No such email!");
+          }
+        }).catch(function(error) {
+          console.log("Error getting document:", error);
+        });
+      }
+
+      function checUser(){
+        let email = document.getElementById("inputEmail").value;
+        let password = document.getElementById("inputPassword").value;
+        checkIfUserExists(email, password);
+      }
+    </script>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
